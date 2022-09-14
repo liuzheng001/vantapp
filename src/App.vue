@@ -1,16 +1,20 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <SelectItem />
+
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import { ref} from 'vue';
+import { Toast } from 'vant';
+import SelectItem from '@/components/SelectItem'
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
+    SelectItem
+  },
+  setup() {
+
+  },
 }
 </script>
 
