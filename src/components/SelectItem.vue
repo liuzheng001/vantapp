@@ -1,4 +1,5 @@
 <template>
+  <Button type="primary">测试</Button>
   <Field
       v-model="fieldValue"
       is-link
@@ -8,7 +9,6 @@
       @click="show = true"
   />
   <Popup v-model:show="show" round position="bottom">
-    <div  style="height: 400px">
       <Cascader
           v-model="cascaderValue"
           title="请选择加工产品:"
@@ -18,7 +18,7 @@
           @change="onChange">
       <template #options-bottom>
         <!--    选项介绍图片或视频,最好是视频-->
-        <Grid  :column-num="3">
+        <Grid  :column-num="4">
           <GridItem>
             <VanImage
                 src="https://fastly.jsdelivr.net/npm/@vant/assets/apple-1.jpeg"
@@ -40,16 +40,22 @@
         </Grid>
       </template>
       </Cascader>
-    </div>
-<!--    产品使用视频list-->
-    <List
+  <!--    产品使用视频list-->
+<!--    <List
         v-model:loading="loading"
         :finished="finished"
         finished-text="没有更多了"
         @load="onLoad"
     >
-      <Cell v-for="item in list" :key="item" :title="item" />
-    </List>
+      <Cell v-for="item in list" :key="item" :title="item" size="large"/>
+    </List>-->
+    <CellGroup  title="推荐产品">
+      <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large" clickable="true"/>
+      <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large" clickable="true"/>
+      <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large" clickable="true"/>
+      <Cell center title="更多..." clickable="true" size="large"/>
+    </CellGroup>
+
   </Popup>
 </template>
 
@@ -57,13 +63,13 @@
 import {ref} from 'vue';
 
 // 1. 引入你需要的组件
-import {Button, Cell, Field, CellGroup, Overlay, Calendar, TreeSelect} from 'vant';
+import {Button, Cell, Field, CellGroup, /*Overlay, Calendar*/} from 'vant';
 import { Image as VanImage } from 'vant';
 import { Cascader } from 'vant';
 import { Popup } from 'vant';
-import { Col, Row } from 'vant';
-import { Space } from 'vant';
-import { List } from 'vant';
+/*import { Col, Row } from 'vant';
+import { Space } from 'vant';*/
+// import { List } from 'vant';
 import { Grid, GridItem } from 'vant';
 
 // 2. 引入组件样式
@@ -74,14 +80,15 @@ export default {
   components: {
     Button,
     VanImage,
-    Overlay,
-    Calendar,
+    // Overlay,
+    // Calendar,
     Field,Popup,Cascader,
-    Col, Row,
-    Space,
+    // Col, Row,
+    // Space,
    Grid,
   GridItem,
-    List,Cell
+    // List,
+    Cell,CellGroup
   },
   setup(){
     let show = ref(false);
@@ -119,6 +126,7 @@ export default {
         value: '310000',
         children: [{ text: '缸体', value: '310100' }],
       },
+
     ];
     // 全部选项选择完毕后，会触发 finish 事件
     const onFinish = ({ selectedOptions }) => {
@@ -166,6 +174,10 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style >
+  :root {
+    --van-cascader-options-height:200px;
+    --van-cell-group-title-color:blue;
+    /*--van-cell-group-title-font-size:24px;*/
+  }
 </style>
