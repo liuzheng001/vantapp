@@ -5,6 +5,7 @@
         v-bind="options"
         :poster="poster"
         @play="onPlay"
+        @pause="onPause"
     />
   </div>
 </template>
@@ -85,7 +86,11 @@ export default {
         const proxy = ev.target;
         full(proxy)
       }*/
+     /* const onPause = (ev) => {
+        console.log(ev)
+        const proxy = ev.target;
 
+      }*/
 
       return {
       ...toRefs(data),
