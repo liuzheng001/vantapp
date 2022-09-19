@@ -1,5 +1,5 @@
 <template>
-  <Button type="primary">测试</Button>
+<!--  <Button type="primary">测试</Button>-->
   <Field
       v-model="fieldValue"
       is-link
@@ -50,44 +50,20 @@
       <Cell v-for="item in list" :key="item" :title="item" size="large"/>
     </List>-->
     <CellGroup  title="推荐产品">
-      <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo()"/>
-      <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo()"/>
-      <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo()"/>
-      <Cell center title="更多..."  size="large"/>
+      <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo('https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4')"/>
+      <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo('https://www.w3school.com.cn/example/html5/mov_bbb.mp4')"/>
+      <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo('https://klxxcdn.oss-cn-hangzhou.aliyuncs.com/histudy/hrm/media/bg3.mp4')"/>
+      <Cell center title="更多..."  @click= "onMore()" size="large"/>
     </CellGroup>
-  </Popup>
-  <Popup v-model:show="videoShow" round position="bottom" @close="closePopup()" >
-
-    <vue3VideoPlay ref="video"
-        v-bind="options"
-        :poster="poster"
-    />
-<!--    <video
-        :src="videoOptions.src"
-        :controls="videoOptions.controls"
-        class="video-js vjs-big-play-centered vjs-fluid"
-        webkit-playsinline="true"
-        playsinline="true"
-        x-webkit-airplay="allow"
-        x5-playsinline
-        style="width: 100%;"
-        @play="onPlayerPlay"
-        @seeking="seeking"
-        ref="video"
-        width="200"
-        height="300"
-    >
-    </video>-->
-
   </Popup>
 </template>
 
 <script>
-import {reactive, ref, toRefs} from 'vue';
+import { ref,} from 'vue';
 // import golfMp4 from "/src/assets/golf.mp4"
 
 // 1. 引入你需要的组件
-import {Button, Cell, Field, CellGroup, /*Overlay, Calendar*/} from 'vant';
+import {Cell, Field, CellGroup, /*Overlay, Calendar*/} from 'vant';
 import { Image as VanImage } from 'vant';
 import { Cascader } from 'vant';
 import { Popup } from 'vant';
@@ -96,15 +72,14 @@ import { Space } from 'vant';*/
 // import { List } from 'vant';
 import { Grid, GridItem } from 'vant';
 // import VideoPlay from '/src/components/VideoPlay'
-import "vue3-video-play/dist/style.css";
-import  vue3VideoPlay from "vue3-video-play";// 2. 引入组件样式
+//引入路由
+import { useRouter } from 'vue-router'
 
-import 'vant/lib/index.css';
+// import 'vant/lib/index.css';
 
 export default {
   name: "SelectItem",
   components: {
-    Button,
     VanImage,
     // Overlay,
     // Calendar,
@@ -116,43 +91,13 @@ export default {
     // List,
     Cell,CellGroup,
     // VideoPlay
-    vue3VideoPlay
   },
-  props:['video_url','poster','title','volume'],
-  setup(props){
+  emit :["videoUrl"],
+
+  setup(props,ctx){
       // let fullScreen = false;
       // const url = "https://www.w3school.com.cn/example/html5/mov_bbb.mp4"
-      let data = reactive({
-        options:{
-          width: "100%", //播放器高度
-          height: "450px", //播放器高度
-          color: "#409eff", //主题色
-          title: props.title, //视频名称
-          src: props.video_url, //视频源
-          muted: true, //静音
-          webFullScreen: false,
-          speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
-          autoPlay: false, //自动播放
-          loop: true, //循环播放
-          mirror: false, //镜像画面
-          ligthOff: true, //关灯模式
-          // volume: props.volume, //默认音量大小
-          control: true, //是否显示控制
-          controlBtns: [
-            "audioTrack",
-            "quality",
-            "speedRate",
-            "volume",
-            "setting",
-            "pip",
-            // "pageFullScreen",
-            "fullScreen",
-          ], //显示所有按钮,
-        },
-        // poster:props.poster
-        poster:""
 
-      });
     const video=ref();
     let show = ref(false);
     let videoShow = ref(false);
@@ -204,8 +149,16 @@ export default {
     const onClose = () => {
       show.value = false;
     };
-    const onVideo = () => {
-      videoShow.value = true;
+    const router = useRouter()
+
+    const onMore =()=>{
+      router.push("./test1")
+    }
+
+
+    const onVideo = (url) => {
+      // videoShow.value = true;
+      ctx.emit("videoUrl",url)
     };
     const closePopup =()=>{
      video.value.pause();
@@ -239,11 +192,11 @@ export default {
       show,fieldValue,cascaderValue, cascaderOptions, onClose, onFinish, onChange,
       list, onLoad, loading, finished,
       videoShow,onVideo,video,closePopup,
-      ...toRefs(data),
-      videoOptions: {
+      onMore
+      /*videoOptions: {
         controls: true,
         src:"https://www.w3school.com.cn/example/html5/mov_bbb.mp4", // url地址
-      },
+      },*/
     }
   },
 

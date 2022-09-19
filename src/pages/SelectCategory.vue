@@ -1,0 +1,106 @@
+<template>
+  <SelectItem @videoUrl = "onVideo"/>
+<!--  videoShow,src,poster通过SelectItem传递-->
+  <Popup v-model:show="videoShow" round position="bottom" @close="closePopup()" >
+    <vue3VideoPlay ref="video"
+                   v-bind="options"
+                   :poster="poster"
+    />
+    <!--    <video
+            :src="videoOptions.src"
+            :controls="videoOptions.controls"
+            class="video-js vjs-big-play-centered vjs-fluid"
+            webkit-playsinline="true"
+            playsinline="true"
+            x-webkit-airplay="allow"
+            x5-playsinline
+            style="width: 100%;"
+            @play="onPlayerPlay"
+            @seeking="seeking"
+            ref="video"
+            width="200"
+            height="300"
+        >
+        </video>-->
+  </Popup>
+</template>
+
+<script>
+    // import { ref} from 'vue';
+    // import { Toast } from 'vant';
+    import SelectItem from '@/components/SelectItem'
+    import {reactive, ref, toRefs} from "vue";
+    import "vue3-video-play/dist/style.css";
+    import  vue3VideoPlay from "vue3-video-play";// 2. 引入组件样式
+    import { Popup } from 'vant';
+
+    export default {
+        name: 'SelectCategory',
+        components: {
+            SelectItem,
+          vue3VideoPlay,
+          Popup
+        },
+
+        setup() {
+          let videoShow = ref(false);
+          const video=ref();
+          let data = reactive({
+            options: {
+              width: "100%", //播放器高度
+              height: "450px", //播放器高度
+              color: "#409eff", //主题色
+              // title: props.title, //视频名称
+              // src: props.video_url, //视频源
+              src: "https://www.w3school.com.cn/example/html5/mov_bbb.mp4", //视频源
+              muted: true, //静音
+              webFullScreen: false,
+              speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
+              autoPlay: false, //自动播放
+              loop: true, //循环播放
+              mirror: false, //镜像画面
+              ligthOff: true, //关灯模式
+              // volume: props.volume, //默认音量大小
+              control: true, //是否显示控制
+              controlBtns: [
+                "audioTrack",
+                "quality",
+                "speedRate",
+                "volume",
+                "setting",
+                "pip",
+                // "pageFullScreen",
+                "fullScreen",
+              ], //显示所有按钮,
+            },
+            // poster:props.poster
+            poster: "https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2021%2F0627%2Fc38a82dcj00qvbzi0000zc000hs00hsc.jpg&thumbnail=660x2147483647&quality=80&type=jpg"
+          })
+          const onVideo = (url) => {
+            videoShow.value = true;
+            // video.value.options.src = url;
+            data.options.src =url;
+          };
+          const closePopup =()=>{
+            video.value.pause();
+          }
+
+          return{
+            video,videoShow,
+            closePopup,onVideo,
+            ...toRefs(data),
+          }
+        },
+    }
+</script>
+
+<style>
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+  }
+</style>
