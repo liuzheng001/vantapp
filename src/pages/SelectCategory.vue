@@ -1,27 +1,33 @@
 <template>
+
+  <div class="about">
+    <h1>This is an about page</h1>
+    <button @click="getData1()">test axios 请求数据</button>
+    <p>这是请求到的数据{{testData.list}}</p>
+  </div>
+
   <SelectItem @videoUrl = "onVideo"/>
 <!--  videoShow,src,poster通过SelectItem传递-->
   <Popup v-model:show="videoShow" round position="bottom" @close="closePopup()" >
-    <vue3VideoPlay ref="video"
+<!--    <vue3VideoPlay ref="video"
                    v-bind="options"
                    :poster="poster"
-    />
-    <!--    <video
-            :src="videoOptions.src"
-            :controls="videoOptions.controls"
+    />-->
+        <video
+            ref="video"
+            :src="options.src"
+            :controls="options.controls"
             class="video-js vjs-big-play-centered vjs-fluid"
             webkit-playsinline="true"
             playsinline="true"
             x-webkit-airplay="allow"
             x5-playsinline
             style="width: 100%;"
-            @play="onPlayerPlay"
             @seeking="seeking"
-            ref="video"
             width="200"
             height="300"
         >
-        </video>-->
+        </video>
   </Popup>
 </template>
 
@@ -29,25 +35,64 @@
     // import { ref} from 'vue';
     // import { Toast } from 'vant';
     import SelectItem from '@/components/SelectItem'
-    import {reactive, ref, toRefs} from "vue";
-    import "vue3-video-play/dist/style.css";
-    import  vue3VideoPlay from "vue3-video-play";// 2. 引入组件样式
+    import {onMounted, reactive, ref, toRefs} from "vue";
+    // import "vue3-video-play/dist/style.css";
+    // import  vue3VideoPlay from "vue3-video-play";// 2. 引入组件样式
     import { Popup } from 'vant';
+    import Axios from '../plugins/axiosInstance';
+    // import '../mock/index.js'
 
     export default {
         name: 'SelectCategory',
         components: {
             SelectItem,
-          vue3VideoPlay,
+          // vue3VideoPlay,
           Popup
         },
 
         setup() {
+          //数据
+          const testData = reactive({
+            list:[]
+          });
+          const getData1 = ()=>{
+            Axios({
+              url:'/test',
+              method:'post',
+              data: {
+                id:33010}
+            }).then((res)=>{
+              alert('请求成功了!');
+              testData.list = res.data.dataList;
+              testData.list.push(23);
+            }).catch((error)=>{
+                  console.log(JSON.stringify(error))
+                }
+            );
+          }
+          onMounted(()=>{
+            //测试请求方法
+              Axios({
+                url:'/test',
+                method:'post',
+                data: {
+                  id:33010}
+              }).then((res)=>{
+                alert('请求成功了!');
+                testData.list = res.data.dataList;
+              }).catch((error)=>{
+                    console.log(JSON.stringify(error))
+                  }
+              );
+            });
+
+
+
           let videoShow = ref(false);
           const video=ref();
           let data = reactive({
             options: {
-              width: "100%", //播放器高度
+              /*width: "100%", //播放器高度
               height: "450px", //播放器高度
               color: "#409eff", //主题色
               // title: props.title, //视频名称
@@ -71,7 +116,9 @@
                 "pip",
                 // "pageFullScreen",
                 "fullScreen",
-              ], //显示所有按钮,
+              ], //显示所有按钮,*/
+              controls: true,
+              src:"https://www.w3school.com.cn/example/html5/mov_bbb.mp4", //默认视频源url地址
             },
             // poster:props.poster
             poster: "https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2021%2F0627%2Fc38a82dcj00qvbzi0000zc000hs00hsc.jpg&thumbnail=660x2147483647&quality=80&type=jpg"
@@ -89,6 +136,7 @@
             video,videoShow,
             closePopup,onVideo,
             ...toRefs(data),
+            testData,getData1
           }
         },
     }

@@ -10,8 +10,8 @@ const routes = [
         }
     },
     {
-        path: '/test1',
-        name: "test1",
+        path: '/VideoDetails',
+        name: "VideoDetails",
         component: () => import('@/pages/VideoDetails')
     },
     /*{
