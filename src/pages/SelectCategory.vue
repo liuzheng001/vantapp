@@ -1,11 +1,4 @@
 <template>
-
-  <div class="about">
-    <h1>This is an about page</h1>
-    <button @click="getData1()">test axios 请求数据</button>
-    <p>这是请求到的数据{{testData.list}}</p>
-  </div>
-
   <SelectItem @videoUrl = "onVideo"/>
 <!--  videoShow,src,poster通过SelectItem传递-->
   <Popup v-model:show="videoShow" round position="bottom" @close="closePopup()" >
@@ -39,7 +32,7 @@
     // import "vue3-video-play/dist/style.css";
     // import  vue3VideoPlay from "vue3-video-play";// 2. 引入组件样式
     import { Popup } from 'vant';
-    import Axios from '../plugins/axiosInstance';
+    // import Axios from '../plugins/axiosInstance';
     // import '../mock/index.js'
 
     export default {
@@ -55,38 +48,9 @@
           const testData = reactive({
             list:[]
           });
-          const getData1 = ()=>{
-            Axios({
-              url:'/test',
-              method:'post',
-              data: {
-                id:33010}
-            }).then((res)=>{
-              alert('请求成功了!');
-              testData.list = res.data.dataList;
-              testData.list.push(23);
-            }).catch((error)=>{
-                  console.log(JSON.stringify(error))
-                }
-            );
-          }
+
           onMounted(()=>{
-            //测试请求方法
-              Axios({
-                url:'/test',
-                method:'post',
-                data: {
-                  id:33010}
-              }).then((res)=>{
-                alert('请求成功了!');
-                testData.list = res.data.dataList;
-              }).catch((error)=>{
-                    console.log(JSON.stringify(error))
-                  }
-              );
             });
-
-
 
           let videoShow = ref(false);
           const video=ref();
@@ -136,7 +100,7 @@
             video,videoShow,
             closePopup,onVideo,
             ...toRefs(data),
-            testData,getData1
+            testData,
           }
         },
     }

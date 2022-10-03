@@ -200,7 +200,7 @@ export default {
     const router = useRouter()
 
     const onMore =()=>{
-      router.push("./test1")
+      router.push("./VideoDetails")
     }
     const onVideo = (url) => {
       // videoShow.value = true;
@@ -246,11 +246,8 @@ export default {
       },*/
     }
   },
-
-
 }
 </script>
-
 <style >
   :root {
     --van-cascader-options-height:200px;

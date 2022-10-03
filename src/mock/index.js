@@ -10,7 +10,7 @@ import Mock from 'mockjs'  //导入mockjs
 })*/
 
 
-Mock.mock("http://localhost:8080/test", "post", (options) => {
+Mock.mock("http://192.168.0.102:8080/test", "post", (options) => {
     const params = JSON.parse(options.body)
     if (params.id == 330100 || params.id ==  330200) {
         return ({

@@ -2,6 +2,14 @@ import { createRouter, createWebHistory } from "vue-router"
 
 const routes = [
     {
+        path: '/login',
+        component: () => import('@/pages/RestfulApiLogin'),
+        meta: {
+            keepAlive: false,
+            isBack: false
+        }
+    },
+    {
         path: '/',
         component: () => import('@/pages/SelectCategory'),
         meta: {
