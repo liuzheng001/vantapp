@@ -2,6 +2,14 @@ import { createRouter, createWebHistory } from "vue-router"
 
 const routes = [
     {
+        path: '/fmcontent',
+        component: () => import('@/pages/RestfulApiContent'),
+        meta: {
+            keepAlive: false,
+            isBack: false
+        }
+    },
+    {
         path: '/login',
         component: () => import('@/pages/RestfulApiLogin'),
         meta: {

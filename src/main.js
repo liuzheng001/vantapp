@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import Axios from "./plugins/axiosInstance";
 //导入模拟数据mock
-import './mock/'
+// import './mock/'
 
 
 const app = createApp(App);   //建立一个vue3app

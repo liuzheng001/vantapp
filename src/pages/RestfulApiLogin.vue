@@ -30,7 +30,7 @@ import { ref} from 'vue';
 import Axios from "@/plugins/axiosInstance";
 
 export default {
-  name: "testRestfulApi",
+  name: "RestfulApiLogin",
   components: {
     Field, CellGroup,Form,Button
   },
@@ -41,15 +41,20 @@ export default {
     const onSubmit = (values) => {
       console.log(values);
       Axios({
-        url:'/mdjfresturl/login',
+        url:'/mdjfresturl',
         method:'post',
-        data:{
+        //query params
+        params:{
           username:values.username,
           password:values.password
-        }
+        },
+        //body params
+        // data:{}
       }).then((res)=>{
-        // alert('请求成功了!');
-        console.log(res);
+        const token = res.data.content.userId +"_"+res.data.content.token
+        localStorage.setItem('token', token)
+        alert('登录成功,token:'+token);
+        // console.log(res);
       }).catch((error)=>{
             console.log(JSON.stringify(error))
           }
