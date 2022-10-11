@@ -18,39 +18,8 @@
           @close="onClose"
           @finish="onFinish"
           @change="onChange">
-<!--      <template #options-bottom>
-        &lt;!&ndash;    选项介绍图片或视频,最好是视频&ndash;&gt;
-        <Grid  :column-num="4">
-          <GridItem>
-            <VanImage
-                src="https://fastly.jsdelivr.net/npm/@vant/assets/apple-1.jpeg"
-            />
-            <div>图片1</div>
-          </GridItem>
-          <GridItem >
-            <VanImage
-                src="https://fastly.jsdelivr.net/npm/@vant/assets/apple-2.jpeg"
-            />
-            <div>视频1</div>
-          </GridItem>
-          <GridItem >
-            <VanImage
-                src="https://fastly.jsdelivr.net/npm/@vant/assets/apple-3.jpeg"
-            />
-            <div>汽车缸体</div>
-          </GridItem>
-        </Grid>
-      </template>-->
       </Cascader>
-  <!--    产品使用视频list-->
-<!--    <List
-        v-model:loading="loading"
-        :finished="finished"
-        finished-text="没有更多了"
-        @load="onLoad"
-    >
-      <Cell v-for="item in list" :key="item" :title="item" size="large"/>
-    </List>-->
+
     <CellGroup  title="推荐产品">
 <!--  动态异步加载-->
       <Cell  v-for="(recommend) in recommendContent" center :title="recommend.title" :key="recommend.title" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo('https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4')"/>
@@ -62,7 +31,7 @@
 </template>
 
 <script>
-import { ref,} from 'vue';
+import {ref,} from 'vue';
 // import golfMp4 from "/src/assets/golf.mp4"
 
 // 1. 引入你需要的组件
@@ -96,6 +65,9 @@ export default {
     Cell,CellGroup,
     // VideoPlay
   },
+  props:
+    ['cascaderOptions']
+  ,
   emit :["videoUrl"],
 
   setup(props,ctx){
@@ -108,7 +80,8 @@ export default {
     const fieldValue = ref('');
     const cascaderValue = ref('');
     // 选项列表，children 代表子选项，支持多级嵌套
-    const cascaderOptions = [
+    // const cascaderOptions = toRefs(props.cascaderOptions)
+        /*[
       {
         text: '汽车配件',
         value: '330000',
@@ -146,7 +119,7 @@ export default {
         value: '310000',
         children: [{ text: '缸体', value: '310100',  url:"https://www.w3school.com.cn/example/html5/mov_bbb.mp4", }],
       },
-    ];
+    ];*/
     const recommendContent =ref([
       {title:"no1"},{title:"no2"},{title:"no3"}
     ])
@@ -235,7 +208,7 @@ export default {
       }, 1000);
     };
     return{
-      show,fieldValue,cascaderValue, cascaderOptions, onClose, onFinish, onChange,
+      show,fieldValue,cascaderValue, onClose, onFinish, onChange,
       list, onLoad, loading, finished,
       recommendContent,getData,
       videoShow,onVideo,video,closePopup,onIntroduce,

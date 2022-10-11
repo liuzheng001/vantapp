@@ -28,6 +28,8 @@
 import { Field, CellGroup,Form,Button} from 'vant';
 import { ref} from 'vue';
 import Axios from "@/plugins/axiosInstance";
+import {useRouter} from "vue-router";
+Axios.defaults.baseURL = "/api";
 
 export default {
   name: "RestfulApiLogin",
@@ -37,6 +39,8 @@ export default {
   setup(){
     const username = ref('');
     const password = ref('');
+    const router = useRouter();
+
     //后台登录
     const onSubmit = (values) => {
       console.log(values);
@@ -54,6 +58,8 @@ export default {
         const token = res.data.content.userId +"_"+res.data.content.token
         localStorage.setItem('token', token)
         alert('登录成功,token:'+token);
+        router.push('/fmcontent');
+
         // console.log(res);
       }).catch((error)=>{
             console.log(JSON.stringify(error))

@@ -1,4 +1,5 @@
 <template>
+  <SelectItem @videoUrl = "onVideo" :cascaderOptions = "cascaderOptions" />
   <SelectItem @videoUrl = "onVideo"/>
 <!--  videoShow,src,poster通过SelectItem传递-->
   <Popup v-model:show="videoShow" round position="bottom" @close="closePopup()" >
@@ -32,6 +33,7 @@
     // import "vue3-video-play/dist/style.css";
     // import  vue3VideoPlay from "vue3-video-play";// 2. 引入组件样式
     import { Popup } from 'vant';
+    import Axios from "@/plugins/axiosInstance";
     // import Axios from '../plugins/axiosInstance';
     // import '../mock/index.js'
 
@@ -48,8 +50,27 @@
           const testData = reactive({
             list:[]
           });
+          // 从fm后台获取标签树
+          const getLabelTree = ()=>{
+            Axios({
+              url:'/mdjfresturl/getLabelTree',
+              method:'get',
+              headers: {
+                'authorization':localStorage.getItem('token'),
+              }
+            }).then((res)=>{
+              // alert('请求成功了!');
+              const result =   res.data.content;
+              cascaderOptions = result[0].cascarder;
+            }).catch((error)=>{
+                  console.log(JSON.stringify(error))
+                }
+            );
+          }
 
+          //
           onMounted(()=>{
+              getLabelTree();
             });
 
           let videoShow = ref(false);
@@ -87,6 +108,48 @@
             // poster:props.poster
             poster: "https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2021%2F0627%2Fc38a82dcj00qvbzi0000zc000hs00hsc.jpg&thumbnail=660x2147483647&quality=80&type=jpg"
           })
+
+          // 选项列表，children 代表子选项，支持多级嵌套
+          let cascaderOptions = []
+              /*[
+          {
+          text: '汽车配件',
+          value: '330000',
+          url:"https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4",
+          children: [
+            { text: '缸体',
+              value: '330100',
+              url:"https://www.w3school.com.cn/example/html5/mov_bbb.mp4",
+              children:[
+                {
+                  text: '铸铁',
+                  value:330110,
+                  key:"https://www.w3school.com.cn/example/html5/mov_bbb.mp4",
+                },
+                {
+                  text: '铝合金',
+                  value:330120,
+                  url:"https://www.w3school.com.cn/example/html5/mov_bbb.mp4",
+                },
+              ]
+            },
+            { text: '缸盖',
+              value: '330200',
+              url:"https://www.w3school.com.cn/example/html5/mov_bbb.mp4",},
+          ],
+        },
+        {
+          text: '摩托车配件',
+          value: '320000',
+          url:"https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4",
+          children: [{ text: '缸体', value: '320100',  url:"https://www.w3school.com.cn/example/html5/mov_bbb.mp4", }],
+        },
+        {
+          text: '通机配件',
+          value: '310000',
+          children: [{ text: '缸体', value: '310100',  url:"https://www.w3school.com.cn/example/html5/mov_bbb.mp4", }],
+        },
+      ];*/
           const onVideo = (url) => {
             videoShow.value = true;
             // video.value.options.src = url;
@@ -99,6 +162,7 @@
           return{
             video,videoShow,
             closePopup,onVideo,
+            cascaderOptions,
             ...toRefs(data),
             testData,
           }
