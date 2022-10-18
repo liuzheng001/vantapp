@@ -4,7 +4,7 @@
       v-model="fieldValue"
       is-link
       readonly
-      label="产品:"
+      :label="category"
       placeholder="请选择加工产品"
       @click="show = true"
   />
@@ -22,7 +22,7 @@
 
     <CellGroup  title="推荐产品">
 <!--  动态异步加载-->
-      <Cell  v-for="(recommend) in recommendContent" center :title="recommend.title" :key="recommend.title" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo('https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4')"/>
+      <Cell  v-for="(recommend) in recommendContent" center :title="recommend.productModel+recommend.productName" :key="recommend.productId" :label="recommend.description" :value="recommend.resume" size="large"  @click="onVideo(recommend.url)"/>
 <!--      <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo('https://www.w3school.com.cn/example/html5/mov_bbb.mp4')"/>
       <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo('https://klxxcdn.oss-cn-hangzhou.aliyuncs.com/histudy/hrm/media/bg3.mp4')"/>-->
       <Cell center title="更多..."  @click= "onMore()" size="large"/>
@@ -66,7 +66,7 @@ export default {
     // VideoPlay
   },
   props:
-    ['cascaderOptions']
+    ['cascaderOptions','category']
   ,
   emit :["videoUrl"],
 
@@ -121,12 +121,13 @@ export default {
       },
     ];*/
     const recommendContent =ref([
-      {title:"no1"},{title:"no2"},{title:"no3"}
+      /*{title:"no1"},{title:"no2"},{title:"no3"}*/
     ])
     // 全部选项选择完毕后，会触发 finish 事件
     const onFinish = ({ selectedOptions }) => {
       show.value = false;
       fieldValue.value = selectedOptions.map((option) => option.text).join('/');
+
     };
     //vant3组件,点按介绍按钮
     const onIntroduce = (option)=>{
@@ -137,14 +138,17 @@ export default {
     //后台获取recommnedContent数据
     const getData = (value)=>{
       Axios({
-        url:'/test',
-        method:'post',
-        data:{
-          id:value
+        url:'/mdjfresturl/recommendList?labelId='+value,
+        method:'get',
+       /* data:{
+          labelId:value
+        },*/
+        headers: {
+          'authorization':localStorage.getItem('token'),
         }
       }).then((res)=>{
         // alert('请求成功了!');
-        recommendContent.value =   res.data.dataList;
+        recommendContent.value =   res.data.content;
       }).catch((error)=>{
             console.log(JSON.stringify(error))
           }
@@ -155,7 +159,6 @@ export default {
       // show.value = false;
       //更新recommendContent值
        getData(value)
-
       /*if (value == 330100 || value == 330200) {
         recommendContent.value = [
           {title:"二级no1"},{title:"二级no2"},{title:"二级no3"}
@@ -163,7 +166,6 @@ export default {
       else{
         recommendContent.value = [{title:"no1"},{title:"no2"},{title:"no3"}]
         }*/
-
       fieldValue.value = selectedOptions.map((option) => option.text).join('/');
     };
     //点close,触发

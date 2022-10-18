@@ -1,7 +1,6 @@
 <template>
-  <SelectItem @videoUrl = "onVideo" :cascaderOptions = "cascaderOptions" />
-  <SelectItem @videoUrl = "onVideo"/>
-<!--  videoShow,src,poster通过SelectItem传递-->
+  <SelectItem  v-for="option in cascaderOptions " @videoUrl = "onVideo" :cascaderOptions = "option.cascarder" :category="option.category" :key="option.value"/>
+  <!--  videoShow,src,poster通过SelectItem传递-->
   <Popup v-model:show="videoShow" round position="bottom" @close="closePopup()" >
 <!--    <vue3VideoPlay ref="video"
                    v-bind="options"
@@ -11,6 +10,8 @@
             ref="video"
             :src="options.src"
             :controls="options.controls"
+            autoplay
+            muted
             class="video-js vjs-big-play-centered vjs-fluid"
             webkit-playsinline="true"
             playsinline="true"
@@ -42,7 +43,7 @@
         components: {
             SelectItem,
           // vue3VideoPlay,
-          Popup
+          Popup,
         },
 
         setup() {
@@ -50,6 +51,9 @@
           const testData = reactive({
             list:[]
           });
+          //级联数据
+          let cascaderOptions = ref();
+          let category = ref();
           // 从fm后台获取标签树
           const getLabelTree = ()=>{
             Axios({
@@ -61,13 +65,13 @@
             }).then((res)=>{
               // alert('请求成功了!');
               const result =   res.data.content;
-              cascaderOptions = result[0].cascarder;
+              cascaderOptions.value = result;
+              category.value = result[0].category
             }).catch((error)=>{
                   console.log(JSON.stringify(error))
                 }
             );
           }
-
           //
           onMounted(()=>{
               getLabelTree();
@@ -110,7 +114,6 @@
           })
 
           // 选项列表，children 代表子选项，支持多级嵌套
-          let cascaderOptions = []
               /*[
           {
           text: '汽车配件',
@@ -158,11 +161,10 @@
           const closePopup =()=>{
             video.value.pause();
           }
-
           return{
             video,videoShow,
             closePopup,onVideo,
-            cascaderOptions,
+            cascaderOptions,category,
             ...toRefs(data),
             testData,
           }

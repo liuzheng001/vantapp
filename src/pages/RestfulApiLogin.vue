@@ -58,7 +58,7 @@ export default {
         const token = res.data.content.userId +"_"+res.data.content.token
         localStorage.setItem('token', token)
         alert('登录成功,token:'+token);
-        router.push('/fmcontent');
+        router.push('/');
 
         // console.log(res);
       }).catch((error)=>{
