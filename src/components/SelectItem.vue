@@ -19,14 +19,14 @@
           @finish="onFinish"
           @change="onChange">
       </Cascader>
-
-    <CellGroup  title="推荐产品">
+    <CellGroup v-if = "!showLoading"  title="推荐产品">
 <!--  动态异步加载-->
       <Cell  v-for="(recommend) in recommendContent" center :title="recommend.productModel+recommend.productName" :key="recommend.productId" :label="recommend.description" :value="recommend.resume" size="large"  @click="onVideo(recommend.url)"/>
 <!--      <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo('https://www.w3school.com.cn/example/html5/mov_bbb.mp4')"/>
       <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo('https://klxxcdn.oss-cn-hangzhou.aliyuncs.com/histudy/hrm/media/bg3.mp4')"/>-->
       <Cell center title="更多..."  @click= "onMore()" size="large"/>
     </CellGroup>
+    <div v-else> {{loadingContent}}</div>
   </Popup>
 </template>
 
@@ -75,6 +75,8 @@ export default {
       // const url = "https://www.w3school.com.cn/example/html5/mov_bbb.mp4"
 
     const video=ref();
+    const showLoading=ref(false);
+    let loadingContent=ref("正在载入...");
     let show = ref(false);
     let videoShow = ref(false);
     const fieldValue = ref('');
@@ -137,6 +139,8 @@ export default {
     };
     //后台获取recommnedContent数据
     const getData = (value)=>{
+      showLoading.value = true
+      loading.value = "正在载入..."
       Axios({
         url:'/mdjfresturl/recommendList?labelId='+value,
         method:'get',
@@ -149,8 +153,10 @@ export default {
       }).then((res)=>{
         // alert('请求成功了!');
         recommendContent.value =   res.data.content;
+        showLoading.value = false
       }).catch((error)=>{
-            console.log(JSON.stringify(error))
+        loading.value = "载入失败,请刷新";
+        console.log(JSON.stringify(error))
           }
       );
     }
@@ -212,7 +218,7 @@ export default {
     return{
       show,fieldValue,cascaderValue, onClose, onFinish, onChange,
       list, onLoad, loading, finished,
-      recommendContent,getData,
+      recommendContent,getData,loadingContent,showLoading,
       videoShow,onVideo,video,closePopup,onIntroduce,
       onMore
       /*videoOptions: {
