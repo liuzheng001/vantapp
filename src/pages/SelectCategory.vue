@@ -31,6 +31,7 @@
     // import { Toast } from 'vant';
     import SelectItem from '@/components/SelectItem'
     import {onMounted, reactive, ref, toRefs} from "vue";
+    import { useRoute } from "vue-router";
     // import "vue3-video-play/dist/style.css";
     // import  vue3VideoPlay from "vue3-video-play";// 2. 引入组件样式
     import { Popup } from 'vant';
@@ -47,6 +48,8 @@
         },
 
         setup() {
+          const route = useRoute();
+          const selectCategory = route.query.selectCategory;
           //数据
           const testData = reactive({
             list:[]
@@ -61,6 +64,9 @@
               method:'get',
               headers: {
                 'authorization':localStorage.getItem('token'),
+              },
+              params:{
+                categoryName:selectCategory
               }
             }).then((res)=>{
               // alert('请求成功了!');
@@ -74,7 +80,8 @@
           }
           //
           onMounted(()=>{
-              getLabelTree();
+            alert(route.query.selectCategory)
+            getLabelTree();
             });
 
           let videoShow = ref(false);

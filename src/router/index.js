@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router"
+import { createRouter, createWebHashHistory } from "vue-router"
 
 const routes = [
     {
@@ -18,12 +18,31 @@ const routes = [
         }
     },
     {
-        path: '/',
+        path: '/selectCategory',
         component: () => import('@/pages/SelectCategory'),
+      /*  meta: {
+            keepAlive: true,
+            isBack: false
+        },*/
+        name:'SelectCategory',
+        // props:true,
+
+    },
+    {
+        path: '/',
+        component: () => import('@/pages/HomePage'),
         meta: {
             keepAlive: true,
             isBack: false
         }
+    },
+    {
+        path: '/ListPage',
+        component: () => import('@/pages/ListPage'),
+      /*  meta: {
+            keepAlive: true,
+            isBack: false
+        },*/
     },
     {
         path: '/VideoDetails',
@@ -37,7 +56,7 @@ const routes = [
     },*/
 ]
 export const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHashHistory(),
     routes: routes
 })
 

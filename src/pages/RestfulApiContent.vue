@@ -5,7 +5,7 @@
 <script>
 import { Button} from 'vant';
 import Axios from "@/plugins/axiosInstance";
-Axios.defaults.baseURL = "/api";
+// Axios.defaults.baseURL = "/api";
 
 export default {
   name: "RestfulApiContent",

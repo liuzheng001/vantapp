@@ -29,7 +29,7 @@ import { Field, CellGroup,Form,Button} from 'vant';
 import { ref} from 'vue';
 import Axios from "@/plugins/axiosInstance";
 import {useRouter} from "vue-router";
-Axios.defaults.baseURL = "/api";
+// Axios.defaults.baseURL = "/api";
 
 export default {
   name: "RestfulApiLogin",
@@ -59,10 +59,12 @@ export default {
         localStorage.setItem('token', token)
         alert('登录成功,token:'+token);
         router.push('/');
-
         // console.log(res);
       }).catch((error)=>{
-            console.log(JSON.stringify(error))
+        if (error.response.status == 404){
+          alert('登录失败');
+        }
+        console.log(JSON.stringify(error))
           }
       );
     };
