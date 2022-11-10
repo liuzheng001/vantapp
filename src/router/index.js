@@ -39,10 +39,11 @@ const routes = [
     {
         path: '/ListPage',
         component: () => import('@/pages/ListPage'),
-      /*  meta: {
+        meta: {
             keepAlive: true,
             isBack: false
-        },*/
+        },
+        props:true,
     },
     {
         path: '/VideoDetails',

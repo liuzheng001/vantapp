@@ -21,12 +21,21 @@
       </Cascader>
     <CellGroup v-if = "!showLoading"  title="推荐产品">
 <!--  动态异步加载-->
-      <Cell  v-for="(recommend) in recommendContent" center :title="recommend.productModel+recommend.productName" :key="recommend.productId" :label="recommend.description" :value="recommend.resume" size="large"  @click="onVideo(recommend.url)"/>
+      <Cell  v-for="(recommend) in recommendContent.slice(0,4)" center :title="recommend.productModel+recommend.productName" :key="recommend.productId" :label="recommend.description" :value="recommend.resume" size="large"  @click="onVideo(recommend.url)"/>
 <!--      <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo('https://www.w3school.com.cn/example/html5/mov_bbb.mp4')"/>
       <Cell center title="HJ-67微乳切削液" label="适用于汽车缸体、缸盖加工" value="半合成" size="large"  @click="onVideo('https://klxxcdn.oss-cn-hangzhou.aliyuncs.com/histudy/hrm/media/bg3.mp4')"/>-->
       <Cell center title="更多..."  @click= "onMore()" size="large"/>
     </CellGroup>
     <div v-else> {{loadingContent}}</div>
+  </Popup>
+
+  <Popup v-model:show="showMore" round position="right">
+    <CellGroup title="推荐产品列表">
+      <Cell  v-for="(recommend) in recommendContent" center :title="recommend.productModel+recommend.productName" :key="recommend.productId" :label="recommend.description" :value="recommend.resume" size="large"  @click="onVideo(recommend.url)"/>
+      <Cell  v-for="(recommend) in recommendContent" center :title="recommend.productModel+recommend.productName" :key="recommend.productId" :label="recommend.description" :value="recommend.resume" size="large"  @click="onVideo(recommend.url)"/>
+      <Cell  v-for="(recommend) in recommendContent" center :title="recommend.productModel+recommend.productName" :key="recommend.productId" :label="recommend.description" :value="recommend.resume" size="large"  @click="onVideo(recommend.url)"/>
+      <Cell  v-for="(recommend) in recommendContent" center :title="recommend.productModel+recommend.productName" :key="recommend.productId" :label="recommend.description" :value="recommend.resume" size="large"  @click="onVideo(recommend.url)"/>
+    </CellGroup>
   </Popup>
 </template>
 
@@ -45,7 +54,7 @@ import { Space } from 'vant';*/
 // import { Grid, GridItem } from 'vant';
 // import VideoPlay from '/src/components/VideoPlay'
 //引入路由
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 import Axios from "@/plugins/axiosInstance";
 
 // import 'vant/lib/index.css';
@@ -79,6 +88,8 @@ export default {
     let loadingContent=ref("正在载入...");
     let show = ref(false);
     let videoShow = ref(false);
+    const showMore = ref(false);
+
     const fieldValue = ref('');
     const cascaderValue = ref('');
     // 选项列表，children 代表子选项，支持多级嵌套
@@ -178,10 +189,10 @@ export default {
     const onClose = () => {
       show.value = false;
     };
-    const router = useRouter()
-
+    // const router = useRouter()
     const onMore =()=>{
-      router.push("./VideoDetails")
+      // router.push("./VideoDetails")
+      showMore.value = true
     }
     const onVideo = (url) => {
       // videoShow.value = true;
@@ -190,8 +201,6 @@ export default {
     const closePopup =()=>{
      video.value.pause();
     }
-
-
 
     //产品使用列表
     const list = ref([]);
@@ -220,6 +229,7 @@ export default {
       list, onLoad, loading, finished,
       recommendContent,getData,loadingContent,showLoading,
       videoShow,onVideo,video,closePopup,onIntroduce,
+      showMore,
       onMore
       /*videoOptions: {
         controls: true,

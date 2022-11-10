@@ -84,6 +84,13 @@
             getLabelTree();
             });
 
+          /*onBeforeRouteLeave(() => {
+
+            notification && notification.destroy()
+
+          })*/
+
+
           let videoShow = ref(false);
           const video=ref();
           let data = reactive({

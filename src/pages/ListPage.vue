@@ -55,6 +55,8 @@ export default {
   setup() {
 
     const router = useRouter()
+    const indexList =ref()
+
     const categoryMap =ref()
     const onBack =()=>{
       router.go(-1)
@@ -84,6 +86,8 @@ export default {
       }).then((res)=>{
         alert(JSON.stringify(res.data.content));
         categoryMap.value =   res.data.content;
+        indexList.value = Object.keys(res.data.content)
+
       }).catch((error)=>{
             // loading.value = "载入失败,请刷新";
             console.log(JSON.stringify(error))
@@ -96,7 +100,7 @@ export default {
     })
     return{
       onBack,
-      indexList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      indexList,
       linkToSelectCategory,categoryMap
     }
   },

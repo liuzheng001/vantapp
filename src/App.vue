@@ -1,10 +1,7 @@
 <template>
   <router-view v-slot="{ Component }">
     <transition>
-<!--      <keep-alive>
-        <component :is="Component" />
-      </keep-alive>-->
-      <keep-alive include="SelectCategory" exclude="VideoDetails">
+      <keep-alive  exclude="VideoDetails,SelectCategory">
         <component :is="Component" />
       </keep-alive>
     </transition>
