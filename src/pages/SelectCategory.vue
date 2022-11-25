@@ -1,9 +1,25 @@
 <template>
-  <SelectItem  v-for="option in cascaderOptions " @videoUrl = "onVideo" :cascaderOptions = "option.cascarder" :category="option.category" :key="option.value"/>
+  <NavBar title="产品推荐" left-text="返回" left-arrow @click-left="onBack" @click-right="onRefresh">
+    <template #right>
+      <Icon name="replay" size="18" />
+    </template>
+  </NavBar>
+  <SelectItem  v-for="option in cascaderOptions " @videoUrl = "onVideo" :cascaderOptions = "option.cascarder" :category="option.category" :key="option.value" @changeCategory = "onChangeCategory" :selectedIds = "selectedIds" :markList = "markList" @closeCascader="onCloseCascader" @userMark = "onUserMark"/>
   <!--  videoShow,src,poster通过SelectItem传递-->
+<!--  推荐产品综合分-->
+  <CellGroup   title="综合推荐">
+    <!--  动态异步加载-->
+    <Cell  v-for="(rank) in rankList.slice(0,6)" center :title="rank" :key="rank"  :value="rank" size="large" @click="linkToRecommend(rank)" />
+    <Cell center title="更多..."  @click= "onMore()" size="large"/>
+  </CellGroup>
+  <CellGroup   title="感兴趣">
+    <!--  动态异步加载-->
+    <Cell  v-for="(rank) in markList.slice(0,6)" center :title="rank" :key="rank"  :value="rank" size="large" @click="linkToRecommend(rank)" />
+<!--    <Cell center title="更多..."  @click= "onMore()" size="large"/>-->
+  </CellGroup>
   <Popup v-model:show="videoShow" round position="bottom" @close="closePopup()" >
 <!--    <vue3VideoPlay ref="video"
-                   v-bind="options"
+                   v-bind="options"z
                    :poster="poster"
     />-->
         <video
@@ -24,25 +40,28 @@
         >
         </video>
   </Popup>
+
 </template>
 
 <script>
     // import { ref} from 'vue';
     // import { Toast } from 'vant';
     import SelectItem from '@/components/SelectItem'
-    import {onMounted, reactive, ref, toRefs} from "vue";
-    import { useRoute } from "vue-router";
+    import {inject, onMounted, reactive, ref, toRefs} from "vue";
+    import {useRoute, useRouter} from "vue-router";
     // import "vue3-video-play/dist/style.css";
     // import  vue3VideoPlay from "vue3-video-play";// 2. 引入组件样式
     import { Popup } from 'vant';
     import Axios from "@/plugins/axiosInstance";
     // import Axios from '../plugins/axiosInstance';
     // import '../mock/index.js'
+    import {Cell,  CellGroup,NavBar,Icon /*Overlay, Calendar*/} from 'vant';
 
     export default {
         name: 'SelectCategory',
         components: {
             SelectItem,
+          Cell, CellGroup,NavBar,Icon,
           // vue3VideoPlay,
           Popup,
         },
@@ -57,14 +76,26 @@
           //级联数据
           let cascaderOptions = ref();
           let category = ref();
+
+          //获取选择的级联类型的id值
+          let selectedIds = {};
+
+          //综合排名列表
+          let rankList= ref([]);
+          //用户标识的列表
+          let markList= ref([]);
+
+          //路由到recommendList
+          const router = useRouter()
+
           // 从fm后台获取标签树
           const getLabelTree = ()=>{
             Axios({
               url:'/mdjfresturl/getLabelTree',
               method:'get',
-              headers: {
+             /* headers: {
                 'authorization':localStorage.getItem('token'),
-              },
+              },*/
               params:{
                 categoryName:selectCategory
               }
@@ -89,7 +120,6 @@
             notification && notification.destroy()
 
           })*/
-
 
           let videoShow = ref(false);
           const video=ref();
@@ -175,14 +205,92 @@
           const closePopup =()=>{
             video.value.pause();
           }
+          const onChangeCategory = (changeCategory) => {
+           Object.assign(selectedIds, changeCategory);
+            // alert(JSON.stringify(selectedIds))
+          }
+
+          //子组件selectItem选择isLike后
+          const onUserMark = (userMark) => {
+            if (userMark.isLike) {
+              markList.value.push(userMark.model)
+            }else{
+              markList.value.splice(markList.value.findIndex(item => item===userMark.model),1)
+              // markList.value.$remove(userMark.model)
+            }
+          }
+
+
+          const onCloseCascader = ()=>{
+            //在级联关闭时候触发
+            getRankList(selectedIds)
+          }
+          //后台获取recommnedContent数据
+          const getRankList = (selectedIds)=>{
+            const ids = Object.values(selectedIds).toString()
+            Axios({
+              url:'/mdjfresturl/rankList?selectedIds='+ids ,
+              method:'get',
+              /* data:{
+                 labelId:value
+               },*/
+              /* headers: {
+                 'authorization':localStorage.getItem('token'),
+               }*/
+            }).then((res)=>{
+              // alert('请求成功了!');
+              const map =   res.data.content;
+              rankList.value = Object.keys(map)
+              // showLoading.value = false
+            }).catch((error)=>{
+                  // loading.value = "载入失败,请刷新";
+                  console.log(JSON.stringify(error))
+                }
+            );
+          }
+          const linkToRecommend = (productType)=>{
+            //去掉汉字
+            const index = escape(productType).indexOf( "%u" );
+            productType = productType.substring(0,index)
+
+            router.push({
+              // path:'/selectCategory',
+              name: 'RecommentDetail',
+              params:{
+                productType
+              },
+              query:{
+                productType
+              }
+            })
+          }
+
+          //路由返回
+          const onBack =()=>{
+            router.go(-1)
+          }
+          //刷新页面
+            /*const onRefresh =()=>{
+              const reload = inject("reload");
+              reload()
+            }
+*/
+          const reload = inject("reload");
+          const onRefresh =()=>{
+            reload()
+          }
           return{
             video,videoShow,
-            closePopup,onVideo,
-            cascaderOptions,category,
+            closePopup,onVideo,onChangeCategory,onCloseCascader,
+            cascaderOptions,category,selectedIds,rankList,
             ...toRefs(data),
             testData,
+            linkToRecommend,onBack,onRefresh,
+            onUserMark,markList
           }
-        },
+        }
+
+
     }
 </script>
 

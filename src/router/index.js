@@ -20,13 +20,11 @@ const routes = [
     {
         path: '/selectCategory',
         component: () => import('@/pages/SelectCategory'),
-      /*  meta: {
-            keepAlive: true,
-            isBack: false
-        },*/
+        meta:{
+            keepAlive:true // 需要缓存
+        },
         name:'SelectCategory',
         // props:true,
-
     },
     {
         path: '/',
@@ -49,6 +47,11 @@ const routes = [
         path: '/VideoDetails',
         name: "VideoDetails",
         component: () => import('@/pages/VideoDetails')
+    },
+    {
+        path: '/RecommentDetail',
+        name: "RecommentDetail",
+        component: () => import('@/pages/RecommentDetail')
     },
     /*{
         path: '/test2',

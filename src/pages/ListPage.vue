@@ -41,7 +41,7 @@
 
 <script>
 import {NavBar, IndexBar, IndexAnchor,Cell,Button } from 'vant';
-import {useRouter} from "vue-router";
+import {onBeforeRouteLeave, useRouter} from "vue-router";
 import Axios from "@/plugins/axiosInstance";
 import {onMounted, ref} from "vue";
 
@@ -74,6 +74,14 @@ export default {
         }
       })
     }
+
+    //路由到SelectCategory清空缓存
+    onBeforeRouteLeave((to, from,next)=> {
+      // 设置下一个路由的 meta
+      to.meta.keepAlive = false;
+      next();
+    })
+
     const getCategoryList = ()=>{
      /* showLoading.value = true
       loading.value = "正在载入..."*/
@@ -101,7 +109,7 @@ export default {
     return{
       onBack,
       indexList,
-      linkToSelectCategory,categoryMap
+      linkToSelectCategory,categoryMap,
     }
   },
 

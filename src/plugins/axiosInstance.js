@@ -6,7 +6,9 @@ import axios from 'axios'
 const Axios = axios.create({
     // baseURL:'http://localhost:8080', //请求后端数据的基本地址，自定义
     // baseURL:'r1w8478651.imwork.net:8080', //请求后端数据的基本地址，自定义
-    baseURL:'http://192.168.0.102:8080', //请求后端数据的基本地址，自定义
+    // baseURL:'http://192.168.0.102:8080', //请求后端数据的基本地址，自定义
+    baseURL:'http://192.168.0.157:8080', //请求后端数据的基本地址，自定义
+    // baseURL:'http://192.168.1.111:8080', //请求后端数据的基本地址，自定义
     // baseURL: '/api',
     timeout: 10000                   //请求超时设置，单位ms
 })
