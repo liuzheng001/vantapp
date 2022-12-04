@@ -2,6 +2,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import Axios from "./plugins/axiosInstance";
+// import { Toast } from 'vant';
+
 //导入模拟数据mock
 // import './mock/'
 

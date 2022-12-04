@@ -1,13 +1,19 @@
 <template>
-<!--  <Button type="primary">测试</Button>-->
-  <Field
-      v-model="fieldValue"
-      is-link
-      readonly
-      :label="category"
-      placeholder="请选择加工产品"
-      @click="show = true"
-  />
+
+  <SwipeCell>
+    <Field
+        v-model="fieldValue"
+        is-link
+        readonly
+        :label="category"
+        placeholder="请选择"
+        @click="show = true"
+    />
+    <template #right>
+      <Button square text="清空" type="danger" class="delete-button" @click="onClearCategory()" />
+    </template>
+  </SwipeCell>
+
 <!--  introduce修改vant3 组件,增加的事件-->
   <Popup v-model:show="show" round position="bottom" :close-on-click-overlay=false>
       <Cascader
@@ -18,22 +24,21 @@
           @close="onClose"
           @change="onChange">
       </Cascader>
-    <CellGroup v-if = "!showLoading"  title="推荐产品">
+    <CellGroup  title="推荐产品">
 <!--  动态异步加载-->
       <Cell  v-for="(recommend) in recommendContent.slice(0,4)" center :title="recommend.model" :key="recommend.id" :label="recommend.description" :value="recommend.resume" size="large"  @click="onVideo(recommend.url)">
         <template #right-icon>
-          <Icon v-if="markList.includes(recommend.model)" name="like" class="search-icon" @click.stop="onSelectedLike(recommend.model,false)" />
+          <Icon v-if="markList.includes(recommend.model)" name="like"  color="#ee0a24" class="search-icon" @click.stop="onSelectedLike(recommend.model,false)" />
           <Icon v-else name="like-o" class="search-icon" @click.stop="onSelectedLike(recommend.model,true)"/>
         </template>
-      </Cell>>
+      </Cell>
       <Cell center title="更多..."  @click= "onMore()" size="large"/>
     </CellGroup>
-    <div v-else> {{loadingContent}}</div>
   </Popup>
 
   <Popup v-model:show="showMore" round position="right">
     <CellGroup title="推荐产品列表">
-      <Cell  v-for="(recommend) in recommendContent" center :title="recommend.model" :key="recommend.id" :label="recommend.description" :value="recommend.resume" size="large"  @click="onVideo(recommend.url)" />
+      <Cell  v-for="  (recommend) in recommendContent" center :title="recommend.model" :key="recommend.id" :label="recommend.description" :value="recommend.resume" size="large"  @click="onVideo(recommend.url)" />
     </CellGroup>
   </Popup>
 </template>
@@ -43,7 +48,7 @@ import {ref,} from 'vue';
 // import golfMp4 from "/src/assets/golf.mp4"
 
 // 1. 引入你需要的组件
-import {Cell, Field, CellGroup, Icon/*Overlay, Calendar*/} from 'vant';
+import {Cell, Field, CellGroup, Icon, Toast, Notify,SwipeCell,Button} from 'vant';
 // import { Image as VanImage } from 'vant';
 import { Cascader } from 'vant';
 import { Popup } from 'vant';
@@ -64,7 +69,7 @@ export default {
     // VanImage,
     // Overlay,
     // Calendar,
-    Field,Popup,Cascader,Icon,
+    Field,Popup,Cascader,Icon,SwipeCell,Button,
     // Col, Row,
     // Space,
   //  Grid,
@@ -83,8 +88,6 @@ export default {
       // const url = "https://www.w3school.com.cn/example/html5/mov_bbb.mp4"
     console.log("mark="+JSON.stringify(props.markList));
     const video=ref();
-    const showLoading=ref(false);
-    let loadingContent=ref("正在载入...");
     let show = ref(false);
     let videoShow = ref(false);
     const showMore = ref(false);
@@ -153,9 +156,13 @@ export default {
     };
     //后台获取recommnedContent数据
     const getData = (value,selectedIds)=>{
+
       const ids = Object.values(selectedIds).toString()
-      showLoading.value = true
-      loading.value = "正在载入..."
+      //加载
+      Toast.loading({
+        message: '加载中...',
+        forbidClick: true,
+      });
       Axios({
         url:'/mdjfresturl/recommendList?labelId='+value+'&selectedIds='+ids ,
         method:'get',
@@ -167,17 +174,20 @@ export default {
         }*/
       }).then((res)=>{
         // alert('请求成功了!');
+        Toast.clear();
         recommendContent.value =   res.data.content;
-        showLoading.value = false
       }).catch((error)=>{
-        loading.value = "载入失败,请刷新";
-        console.log(JSON.stringify(error))
-          }
+        Toast.clear();
+            Notify({ type: 'warning', message: '载入失败,请重载.',  duration: 3000,
+            });
+            console.log(JSON.stringify(error))
+      }
       );
     }
     //选项更换触发,value为option中的key值
     const onChange = ({ selectedOptions,value }) => {
       // show.value = false;
+      console.log(JSON.stringify(selectedOptions));
       //排出当前级联的值
       const copy = { ...props.selectedIds }
       delete copy[props.category];
@@ -195,6 +205,11 @@ export default {
       ctx.emit("changeCategory",changeCategory)
 
     };
+    //滑动清除Field时
+    const onClearCategory = ()=>{
+      fieldValue.value="";
+      ctx.emit("closeCascader",props.category)
+    }
     //点close,触发
     const onClose = () => {
       show.value = false;
@@ -224,7 +239,7 @@ export default {
 
     //产品使用列表
     const list = ref([]);
-    const loading = ref(false);
+
     const finished = ref(false);
 
     const onLoad = () => {
@@ -235,8 +250,7 @@ export default {
           list.value.push(list.value.length + 1);
         }
 
-        // 加载状态结束
-        loading.value = false;
+
 
         // 数据全部加载完成
         if (list.value.length >= 40) {
@@ -245,9 +259,10 @@ export default {
       }, 1000);
     };
     return{
-      show,fieldValue,cascaderValue, onClose,  onChange,
-      list, onLoad, loading, finished,
-      recommendContent,getData,loadingContent,showLoading,
+      show,fieldValue,onClearCategory,
+      cascaderValue, onClose,  onChange,
+      list, onLoad,  finished,
+      recommendContent,getData,
       videoShow,onVideo,video,closePopup,onIntroduce,
       showMore,onSelectedLike,
       onMore

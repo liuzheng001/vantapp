@@ -10,7 +10,7 @@
   <CellGroup   title="综合推荐">
     <!--  动态异步加载-->
     <Cell  v-for="(rank) in rankList.slice(0,6)" center :title="rank" :key="rank"  :value="rank" size="large" @click="linkToRecommend(rank)" />
-    <Cell center title="更多..."  @click= "onMore()" size="large"/>
+<!--    <Cell center title="所有..."  @click= "onMore()" size="large"/>-->
   </CellGroup>
   <CellGroup   title="感兴趣">
     <!--  动态异步加载-->
@@ -51,7 +51,7 @@
     import {useRoute, useRouter} from "vue-router";
     // import "vue3-video-play/dist/style.css";
     // import  vue3VideoPlay from "vue3-video-play";// 2. 引入组件样式
-    import { Popup } from 'vant';
+    import {Popup, Toast} from 'vant';
     import Axios from "@/plugins/axiosInstance";
     // import Axios from '../plugins/axiosInstance';
     // import '../mock/index.js'
@@ -90,6 +90,10 @@
 
           // 从fm后台获取标签树
           const getLabelTree = ()=>{
+            Toast.loading({
+              message: '加载中...',
+              forbidClick: true,
+            });
             Axios({
               url:'/mdjfresturl/getLabelTree',
               method:'get',
@@ -101,17 +105,19 @@
               }
             }).then((res)=>{
               // alert('请求成功了!');
+              Toast.clear();
               const result =   res.data.content;
               cascaderOptions.value = result;
               category.value = result[0].category
             }).catch((error)=>{
-                  console.log(JSON.stringify(error))
+              Toast.clear();
+              console.log(JSON.stringify(error))
                 }
             );
           }
           //
           onMounted(()=>{
-            alert(route.query.selectCategory)
+            // alert(route.query.selectCategory)
             getLabelTree();
             });
 
@@ -220,13 +226,26 @@
             }
           }
 
-
-          const onCloseCascader = ()=>{
+          const onCloseCascader = (category)=>{
+            if (category) {
+              delete selectedIds[category];
+            }
             //在级联关闭时候触发
+            alert(JSON.stringify(selectedIds));
             getRankList(selectedIds)
           }
           //后台获取recommnedContent数据
           const getRankList = (selectedIds)=>{
+
+            if (Object.keys(selectedIds).length==0) {
+              rankList.value=[];
+              return;
+            }
+            //加载
+            Toast.loading({
+              message: '加载中...',
+              forbidClick: true,
+            });
             const ids = Object.values(selectedIds).toString()
             Axios({
               url:'/mdjfresturl/rankList?selectedIds='+ids ,
@@ -239,12 +258,14 @@
                }*/
             }).then((res)=>{
               // alert('请求成功了!');
+              Toast.clear();
               const map =   res.data.content;
               rankList.value = Object.keys(map)
               // showLoading.value = false
             }).catch((error)=>{
-                  // loading.value = "载入失败,请刷新";
-                  console.log(JSON.stringify(error))
+              // loading.value = "载入失败,请刷新";
+              Toast.clear();
+              console.log(JSON.stringify(error))
                 }
             );
           }
