@@ -92,7 +92,7 @@ export default {
            labelId:value
          },*/
       }).then((res)=>{
-        alert(JSON.stringify(res.data.content));
+        // alert(JSON.stringify(res.data.content));
         categoryMap.value =   res.data.content;
         indexList.value = Object.keys(res.data.content)
 

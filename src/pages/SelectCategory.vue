@@ -231,7 +231,7 @@
               delete selectedIds[category];
             }
             //在级联关闭时候触发
-            alert(JSON.stringify(selectedIds));
+            // alert(JSON.stringify(selectedIds));
             getRankList(selectedIds)
           }
           //后台获取recommnedContent数据
