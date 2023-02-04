@@ -63,6 +63,20 @@ import Axios from "@/plugins/axiosInstance";
 
 // import 'vant/lib/index.css';
 
+function getSelcetedOptions(cascaderValue,cascaderOptions) {
+  const length = cascaderValue.length;
+  let count = 0;
+  // const value = cascaderValue.substr(cascaderValue, 0, 8);
+  const selectedOptions = cascaderOptions.filter((current)=>{
+    let value = cascaderValue.substr(0, 12 + count * 4);
+    if (value === current.value && value.length<=length){
+      count++
+      return true;
+    }else return false;
+  })
+  return selectedOptions;
+}
+
 export default {
   name: "SelectItem",
   components: {
@@ -79,7 +93,7 @@ export default {
     // VideoPlay
   },
   props:
-    ['cascaderOptions','category',"selectedIds","markList"]
+    ['cascaderOptions','category',"selectedIds","markList","selectedValues"]
   ,
   emit :["videoUrl"],
 
@@ -93,7 +107,22 @@ export default {
     const showMore = ref(false);
 
     const fieldValue = ref('');
-    const cascaderValue = ref('');
+    let cascaderValue = ref('');
+    // alert("prpps"+ JSON.stringify(props))
+    // eslint-disable-next-line vue/no-setup-props-destructure
+
+    // eslint-disable-next-line vue/no-setup-props-destructure
+    const selectId = props.selectedIds[props.category]
+    // eslint-disable-next-line vue/no-setup-props-destructure
+    const selectValue = props.selectedValues[props.category]
+    // alert("sel1+value:" + JSON.stringify(selectId)+JSON.stringify(selectValue));
+    cascaderValue.value = selectId;
+    fieldValue.value = selectValue;
+
+
+   /* const selectedOptions = getSelcetedOptions(cascaderValue.value,props.cascaderOptions)
+    fieldValue.value = selectedOptions.map((option) => option.text).join('/');*/
+
     // 选项列表，children 代表子选项，支持多级嵌套
     // const cascaderOptions = toRefs(props.cascaderOptions)
         /*[
@@ -187,7 +216,8 @@ export default {
     //选项更换触发,value为option中的key值
     const onChange = ({ selectedOptions,value }) => {
       // show.value = false;
-      console.log(JSON.stringify(selectedOptions));
+      // alert("selectedOptions"+ JSON.stringify(selectedOptions));
+      // alert("cascaderValue"+cascaderValue.value)
       //排出当前级联的值
       const copy = { ...props.selectedIds }
       delete copy[props.category];
@@ -200,8 +230,16 @@ export default {
         recommendContent.value = [{title:"no1"},{title:"no2"},{title:"no3"}]
         }*/
       fieldValue.value = selectedOptions.map((option) => option.text).join('/');
-      const changeCategory = {[props.category]:value}
-      // alert(changeCategory)
+      const changeCategory = {
+          //将选择的values和text都返回父组件
+        [props.category]:JSON.stringify({
+          value,
+          fieldValue: fieldValue.value
+        })
+      }
+      /*const selected = getSelcetedOptions(cascaderValue.value,props.cascaderOptions)
+      alert(JSON.stringify(selected));*/
+      // alert("changeCategory" +JSON.stringify(changeCategory))
       ctx.emit("changeCategory",changeCategory)
 
     };
@@ -250,8 +288,6 @@ export default {
           list.value.push(list.value.length + 1);
         }
 
-
-
         // 数据全部加载完成
         if (list.value.length >= 40) {
           finished.value = true;
@@ -272,6 +308,7 @@ export default {
       },*/
     }
   },
+
 }
 </script>
 <style >
