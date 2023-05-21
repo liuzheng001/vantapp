@@ -1,6 +1,6 @@
 <template>
 
-  <SwipeCell>
+  <SwipeCell >
     <Field
         v-model="fieldValue"
         is-link
@@ -24,7 +24,7 @@
           @close="onClose"
           @change="onChange">
       </Cascader>
-    <CellGroup  title="推荐产品">
+    <CellGroup  title="推荐产品" inset>
 <!--  动态异步加载-->
       <Cell  v-for="(recommend) in recommendContent.slice(0,4)" center :title="recommend.model" :key="recommend.id" :label="recommend.description" :value="recommend.resume" size="large"  @click="onVideo(recommend.url)">
         <template #right-icon>

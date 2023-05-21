@@ -42,6 +42,7 @@ const routes = [
             isBack: false
         },
         props:true,
+        name:'ListPage'
     },
     {
         path: '/VideoDetails',
@@ -53,6 +54,12 @@ const routes = [
         name: "RecommentDetail",
         component: () => import('@/pages/RecommentDetail')
     },
+    {
+        path: '/auth',
+        name: "Auth",
+        component: () => import('@/pages/authPage')
+    },
+
     /*{
         path: '/test2',
         name: "test2",

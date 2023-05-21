@@ -7,19 +7,31 @@
   <SelectItem  v-for="option in cascaderOptions " @videoUrl = "onVideo" :cascaderOptions = "option.cascarder" :category="option.category" :key="option.value" @changeCategory = "onChangeCategory" :selectedIds = "selectedIds" :selectedValues="selectedValues" :markList = "markList" @closeCascader="onCloseCascader" @userMark = "onUserMark"/>
   <!--  videoShow,src,poster通过SelectItem传递-->
 <!--  推荐产品综合分-->
+
+
   <CellGroup   title="综合推荐">
     <!--  动态异步加载-->
-    <Cell  v-for="(rank) in rankList.slice(0,6)" center :title="rank" :key="rank"  :value="rank" size="large" @click="linkToRecommend(rank)" />
+<!--    <Cell  v-for="(value,key) in rankList" center :title="key" :key="key"  :value="value" size="large" @click="linkToRecommend(key)" />-->
+    <Cell  v-for="(value,key) in rankList" center :title="key" :key="key"  :value="value" size="large" @click="linkToRecommend(key)" >
+      <view slot="value">
+        <Rate v-model="rankList[key]"  readonly allow-half/>
+      </view>
+    </Cell>
 <!--    <Cell center title="所有..."  @click= "onMore()" size="large"/>-->
   </CellGroup>
   <CellGroup   title="感兴趣">
     <!--  动态异步加载-->
-    <Cell  v-for="(rank) in markList.slice(0,6)" center :title="rank" :key="rank"  :value="rank" size="large" @click="linkToRecommend(rank)" />
+    <Cell  v-for="(rank) in markList.slice(0,6)" center :title="rank" :key="rank"  :value="rank" size="large" @click="linkToRecommend(rank)">
+      <view slot="value">
+        <Icon  name="like"  color="#ee0a24" class="search-icon" style="font-size: 18px"/>
+      </view>
+    </Cell>
+
 <!--    <Cell center title="更多..."  @click= "onMore()" size="large"/>-->
   </CellGroup>
   <Popup v-model:show="videoShow" round position="bottom" @close="closePopup()" >
 <!--    <vue3VideoPlay ref="video"
-                   v-bind="options"z
+                   v-bind="options"
                    :poster="poster"
     />-->
         <video
@@ -55,15 +67,15 @@
     import Axios from "@/plugins/axiosInstance";
     // import Axios from '../plugins/axiosInstance';
     // import '../mock/index.js'
-    import {Cell,  CellGroup,NavBar,Icon /*Overlay, Calendar*/} from 'vant';
+    import {Cell,  CellGroup,NavBar,Icon,Rate/*Overlay, Calendar*/} from 'vant';
 
     export default {
         name: 'SelectCategory',
         components: {
             SelectItem,
-          Cell, CellGroup,NavBar,Icon,
+          Cell, CellGroup,NavBar,Rate,
           // vue3VideoPlay,
-          Popup,
+          Popup,Icon
         },
 
       setup() {
@@ -83,7 +95,7 @@
         let selectedValues = ref({});
 
           //综合排名列表
-          let rankList = ref([]);
+          let rankList = ref({});
           //用户标识的列表
           let markList = ref([]);
         onBeforeMount(async () => {
@@ -128,12 +140,13 @@
           });*/
           //得到缓存值
           //选择级联的values，用/分开
+          /*//真机
           await dd.util.domainStorage.getItem({
             name: 'selectedValues', // 存储信息的key值
             onSuccess: function (info) {
-              /*{
+              /!*{
                    value: 'value' // 获取存储的信息
-               }*/
+               }*!/
               // alert(JSON.stringify(info));
               selectedValues.value = JSON.parse(info.value);
               alert("selectedValues:" + JSON.stringify(JSON.parse(info.value)));
@@ -148,9 +161,9 @@
          await dd.util.domainStorage.getItem({
             name: 'selectedIds', // 存储信息的key值
             onSuccess: function (info) {
-              /*{
+              /!*{
                    value: 'value' // 获取存储的信息
-               }*/
+               }*!/
               // alert(JSON.stringify(info));
               selectedIds.value = JSON.parse(info.value);
               alert("selectedIds:" + JSON.stringify(JSON.parse(info.value)));
@@ -165,9 +178,9 @@
          await dd.util.domainStorage.getItem({
             name: 'markList', // 存储信息的key值
             onSuccess: function (info) {
-              /*{
+              /!*{
                    value: 'value' // 获取存储的信息
-               }*/
+               }*!/
               if (info.value !== "") {
                 markList.value = info.value.split(",");
               }
@@ -176,7 +189,7 @@
             onFail: function (err) {
               alert(JSON.stringify(err));
             }
-          });
+          });*/
          await getLabelTree();
         });
           //路由到recommendList
@@ -332,7 +345,8 @@
               markList.value.splice(markList.value.findIndex(item => item === userMark.model), 1)
               // markList.value.$remove(userMark.model)
             }
-            alert("markList:" + markList.value);
+            // alert("markList:" + markList.value);
+            /*//真机
             dd.util.domainStorage.setItem({
               name: 'markList', // 存储信息的key值
               value: Object.values(markList.value).toString(), // 存储信息的Value值
@@ -342,7 +356,7 @@
               onFail: function (err) {
                 alert("fail" + JSON.stringify(err));
               }
-            });
+            });*/
           }
 
           const onCloseCascader =  (category) => {
@@ -357,7 +371,7 @@
           //后台获取recommnedContent数据
           const getRankList = async (selectedIds) => {
             if (Object.keys(selectedIds).length == 0) {
-              rankList.value = [];
+              rankList.value = {};
               return;
             }
             //加载
@@ -368,6 +382,7 @@
             const ids = Object.values(selectedIds).toString()
             // alert("selectedValues:" + JSON.stringify(selectedValues.value));
             //缓存selectedIds和userIds,用户选择的ids
+            /*//真机
             await  dd.util.domainStorage.setItem({
               name: 'selectedValues', // 存储信息的key值
               value: JSON.stringify(selectedValues.value), // 存储信息的Value值
@@ -387,8 +402,7 @@
               onFail: function (err) {
                 alert("fail1" + JSON.stringify(err));
               }
-            });
-
+            });*/
             Axios({
               url: '/mdjfresturl/rankList?selectedIds=' + ids,
               method: 'get',
@@ -402,7 +416,12 @@
               // alert('请求成功了!');
               Toast.clear();
               const map = res.data.content;
-              rankList.value = Object.keys(map)
+              // rankList.value = Object.keys(map)
+              // rankList =  map;
+              rankList.value ={}
+              Object.keys(map).forEach((key,) => {
+                rankList.value[key] = map[key]/100*5;
+              })
               // showLoading.value = false
             }).catch((error) => {
                   // loading.value = "载入失败,请刷新";
@@ -440,33 +459,6 @@
 */
           const reload = inject("reload");
           const onRefresh = () => {
-            dd.util.domainStorage.removeItem({
-              name: 'selectedIds', // 存储信息的key值
-              onSuccess: function (info) {
-                alert("success1" + JSON.stringify(info));
-              },
-              onFail: function (err) {
-                alert("fail1" + JSON.stringify(err));
-              }
-            });
-            dd.util.domainStorage.removeItem({
-              name: 'selectedValues', // 存储信息的key值
-              onSuccess: function (info) {
-                alert("success2" + JSON.stringify(info));
-              },
-              onFail: function (err) {
-                alert("fail1" + JSON.stringify(err));
-              }
-            });
-            dd.util.domainStorage.removeItem({
-              name: 'markList', // 存储信息的key值
-              onSuccess: function (info) {
-                // alert("success"+JSON.stringify(info));
-              },
-              onFail: function (err) {
-                alert("fail" + JSON.stringify(err));
-              }
-            });
             reload()
           }
           return {
@@ -476,7 +468,7 @@
             ...toRefs(data),
             testData,
             linkToRecommend, onBack, onRefresh,
-            onUserMark, markList
+            onUserMark, markList,
           }
         }
 
