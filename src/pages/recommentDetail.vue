@@ -18,6 +18,7 @@
 
     <GridItem v-for="recommend in recommendList" :key="recommend.url">
       <Image :src="recommend.coverURL" height="150px" @click="onVideo(recommend.url)" />
+      <h5>{{recommend.description?recommend.description:"无描述"}}</h5>
     </GridItem>
   </Grid>
 

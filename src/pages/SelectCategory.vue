@@ -36,7 +36,11 @@
                    v-bind="options"
                    :poster="poster"
     />-->
-        <video
+    <view>
+      <Button v-if="videosPath&&videosPath.length>1" @click="onChangeVideo(-1)" :disabled = "currentVideoIndex===0">上一个</button>
+      <Button v-if="videosPath&&videosPath.length>1" @click="onChangeVideo(1)" :disabled="videosPath.length === currentVideoIndex+1">下一个</Button>
+
+      <video
             ref="video"
             :src="options.src"
             :controls="options.controls"
@@ -53,6 +57,7 @@
             height="300"
         >
         </video>
+    </view>
   </Popup>
 
 </template>
@@ -69,7 +74,7 @@
     import Axios from "@/plugins/axiosInstance";
     // import Axios from '../plugins/axiosInstance';
     // import '../mock/index.js'
-    import {Cell,  CellGroup,NavBar,Icon,Rate/*Overlay, Calendar*/} from 'vant';
+    import {Cell,  CellGroup,NavBar,Icon,Rate/*Overlay, Calendar*/,Button} from 'vant';
 
     export default {
         name: 'SelectCategory',
@@ -77,7 +82,7 @@
             SelectItem,
           Cell, CellGroup,NavBar,Rate,
           // vue3VideoPlay,
-          Popup,Icon
+          Popup,Icon,Button
         },
 
       setup() {
@@ -239,7 +244,10 @@
           })*/
 
           let videoShow = ref(false);
-          const video = ref();
+        let currentVideoIndex = ref(0);//当前视频序号
+        let videosPath = ref([]);//视频集
+
+        const video = ref();
           let data = reactive({
             options: {
               /*width: "100%", //播放器高度
@@ -315,12 +323,43 @@
     },
   ];*/
           const onVideo = (url) => {
-            videoShow.value = true;
-            // video.value.options.src = url;
-            data.options.src = url;
+            console.log("url:"+JSON.stringify(url));
+            if (Array.isArray(url)) {
+              //url为数组
+              if (url.length === 1) {
+                videoShow.value = true;
+                // video.value.options.src = url;
+                data.options.src = url[0];
+              } else {
+                videoShow.value = true;
+                // video.value.options.src = url;
+                data.options.src = url[0];
+                currentVideoIndex.value = 0;
+                videosPath.value = url;
+              }
+            } else if (typeof(url)=='string') {
+              videoShow.value = true;
+              // video.value.options.src = url;
+              data.options.src = url;
+            } else {
+              alert("暂无视频");
+            }
           };
+
+        const onChangeVideo =(direct)=>{
+          if (direct == 1) {
+            currentVideoIndex.value++;
+          }else{
+            currentVideoIndex.value--;
+          }
+          videoShow.value = true;
+          // video.value.options.src = url;
+          data.options.src = videosPath.value[currentVideoIndex.value];
+        };
           const closePopup = () => {
             video.value.pause();
+            currentVideoIndex.value = 0;
+            videosPath.value = null;
           }
           const onChangeCategory = (changeCategory) => {
             //这里有问题
@@ -469,7 +508,8 @@
           }
           return {
             video, videoShow,
-            closePopup, onVideo, onChangeCategory, onCloseCascader,
+            closePopup, onVideo,onChangeVideo, videosPath,currentVideoIndex,
+            onChangeCategory, onCloseCascader,
             cascaderOptions, category, selectedIds, rankList,selectedValues,
             ...toRefs(data),
             testData,
