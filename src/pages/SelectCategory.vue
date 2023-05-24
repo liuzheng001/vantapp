@@ -13,18 +13,20 @@
     <!--  动态异步加载-->
 <!--    <Cell  v-for="(value,key) in rankList" center :title="key" :key="key"  :value="value" size="large" @click="linkToRecommend(key)" />-->
     <Cell  v-for="(value,key) in rankList" center :title="key" :key="key"  :value="value" size="large" @click="linkToRecommend(key)" >
-      <view slot="value">
+      <template v-slot:value>
+<!--        <view slot="value">-->
         <Rate v-model="rankList[key]"  readonly allow-half/>
-      </view>
+<!--        </view>-->
+      </template>
     </Cell>
 <!--    <Cell center title="所有..."  @click= "onMore()" size="large"/>-->
   </CellGroup>
   <CellGroup   title="感兴趣">
     <!--  动态异步加载-->
     <Cell  v-for="(rank) in markList.slice(0,6)" center :title="rank" :key="rank"  :value="rank" size="large" @click="linkToRecommend(rank)">
-      <view slot="value">
+      <template v-slot:value>
         <Icon  name="like"  color="#ee0a24" class="search-icon" style="font-size: 18px"/>
-      </view>
+      </template>
     </Cell>
 
 <!--    <Cell center title="更多..."  @click= "onMore()" size="large"/>-->
@@ -419,7 +421,11 @@
               // rankList.value = Object.keys(map)
               // rankList =  map;
               rankList.value ={}
-              Object.keys(map).forEach((key,) => {
+              Object.keys(map).forEach((key,index) => {
+                //top5
+                if (index > 4) {
+                  return
+                }
                 rankList.value[key] = map[key]/100*5;
               })
               // showLoading.value = false

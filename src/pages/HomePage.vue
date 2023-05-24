@@ -12,22 +12,22 @@
   <Button type="warning" block @click="getImportantContent2()">获取用户关重信息</Button>-->
   <Grid border="true" column-num="2">
     <GridItem  @click="linkToCategory('切削液')"  >
-      <Image src="https://img.yzcdn.cn/vant/apple-1.jpg"  style="width: 100%; height: 120px;"
+      <Image src="https://video.ckkj.net.cn/image/default/8ECBAA2A80FE4F79A2B78C2776A304A2-6-2.png"  style="width: 100%; height: 120px;"
       />
       <h1>切削液</h1>
     </GridItem>
     <GridItem  @click="linkToCategory('水基清洗剂')"  >
-      <Image src="https://img.yzcdn.cn/vant/apple-2.jpg"  style="width: 100%; height: 120px;"
+      <Image src="https://video.ckkj.net.cn/image/default/1CB98D1B8856484A802C2FE07B37E3E6-6-2.jpeg"  style="width: 100%; height: 120px;"
       />
-      <h1>水基清洗剂</h1>
+      <h1>清洗剂</h1>
     </GridItem>
     <GridItem  @click="linkToCategory('防锈油')" >
-      <Image src="https://img.yzcdn.cn/vant/apple-3.jpg"  style="width: 100%; height: 120px;"
+      <Image src="https://video.ckkj.net.cn/image/default/D27854EFE4FF40B386C5CB14B4628647-6-2.jpg"  style="width: 100%; height: 120px;"
       />
       <h1>防锈油(剂)</h1>
     </GridItem>
     <GridItem  url="/#/ListPage/"  >
-      <Image src="https://img.yzcdn.cn/vant/apple-4.jpg"  style="width: 100%; height: 120px;"
+      <Image src="https://video.ckkj.net.cn/image/default/1A4A1EDC68D8474CAAA16BD4AF22A93D-6-2.jpg"  style="width: 100%; height: 120px;"
       />
       <Button type="warning" block >更多</Button>
     </GridItem>
